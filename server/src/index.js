@@ -10,8 +10,6 @@ import models, { sequelize } from './models';
 
 import cors from 'cors';
 
-console.log(process.env.MY_SECRET);
-
 const app = express();
 app.use(cors());
 
@@ -21,11 +19,12 @@ const server = new ApolloServer({
   context: async () => ({
     models,
     me: await models.User.findByLogin('rwieruch'),
+    secret: process.env.SECRET,
   }),
 });
 server.applyMiddleware({ app, path: '/graphql' });
 
-const eraseDatabaseOnSync = false;
+const eraseDatabaseOnSync = true;
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   if (eraseDatabaseOnSync) {
     createUsersWithMessages();
@@ -39,6 +38,8 @@ const createUsersWithMessages = async () => {
   await models.User.create(
     {
       username: 'rwieruch',
+      email: 'hello@robin.com',
+      password: 'rwieruch',
       messages: [
         {
           text: 'Published the Road to learn React',
@@ -52,6 +53,8 @@ const createUsersWithMessages = async () => {
   await models.User.create(
     {
       username: 'ddavids',
+      email: 'hello@david.com',
+      password: 'ddavids',
       messages: [
         {
           text: 'Happy to release...',

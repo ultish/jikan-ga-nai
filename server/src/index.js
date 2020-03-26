@@ -1,6 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
+import http from 'http';
 
 // must import this before any uses of process.ENV
 import 'dotenv/config';
@@ -30,24 +31,34 @@ app.use(cors());
 const server = new ApolloServer({
   typeDefs: schema,
   resolvers,
-  context: async ({ req }) => {
-    const me = await getMe(req);
+  context: async ({ req, connection }) => {
+    if (connection) {
+      return {
+        models,
+      };
+    }
+    if (req) {
+      const me = await getMe(req);
 
-    return {
-      models,
-      me,
-      secret: process.env.SECRET,
-    };
+      return {
+        models,
+        me,
+        secret: process.env.SECRET,
+      };
+    }
   },
 });
 server.applyMiddleware({ app, path: '/graphql' });
+
+const httpServer = http.createServer(app);
+server.installSubscriptionHandlers(httpServer);
 
 const eraseDatabaseOnSync = true;
 sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   if (eraseDatabaseOnSync) {
     createUsersWithMessages(new Date());
   }
-  app.listen({ port: 8000 }, () => {
+  httpServer.listen({ port: 8000 }, () => {
     console.log('Apollo Server on http://localhost:8000/graphql');
   });
 });

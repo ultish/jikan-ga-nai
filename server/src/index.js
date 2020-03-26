@@ -2,6 +2,8 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { ApolloServer, AuthenticationError } from 'apollo-server-express';
 import http from 'http';
+import DataLoader from 'dataloader';
+import loaders from './loaders';
 
 // must import this before any uses of process.ENV
 import 'dotenv/config';
@@ -25,6 +27,11 @@ const getMe = async req => {
   }
 };
 
+// this *fakes* caching and will return the same User objects back once they
+// appear in the dataloader instance. I say fake as it has no expiry strategy
+// so you always get the same User object back.
+// const userLoader = new DataLoader(keys => batchUsers(keys, models));
+
 const app = express();
 app.use(cors());
 
@@ -35,6 +42,9 @@ const server = new ApolloServer({
     if (connection) {
       return {
         models,
+        loaders: {
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+        },
       };
     }
     if (req) {
@@ -44,6 +54,9 @@ const server = new ApolloServer({
         models,
         me,
         secret: process.env.SECRET,
+        loaders: {
+          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+        },
       };
     }
   },

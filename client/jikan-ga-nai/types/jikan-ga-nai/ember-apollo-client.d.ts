@@ -1,1 +1,1 @@
-declare module "ember-apollo-client";
+// declare module "ember-apollo-client";

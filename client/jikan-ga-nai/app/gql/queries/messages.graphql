@@ -1,0 +1,11 @@
+query messages($cursor: String, $limit: Int) {
+  messages(cursor: $cursor, limit: $limit) {
+    edges {
+      text
+    }
+    pageInfo {
+      endCursor
+      hasNextPage
+    }
+  }
+}

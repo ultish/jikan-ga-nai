@@ -3,12 +3,11 @@ import ApolloService from "ember-apollo-client/services/apollo";
 import { split } from "apollo-link";
 import { getMainDefinition } from "apollo-utilities";
 import { WebSocketLink } from "apollo-link-ws";
-import { InMemoryCache } from "apollo-cache-inmemory";
-
-// Create an http link:
-// const httpLink = new HttpLink({
-//   uri: "http://localhost:8000/graphql"
-// });
+import { setContext } from "apollo-link-context";
+import { onError } from "apollo-link-error";
+import { ServerError } from "apollo-link-http-common";
+import { inject as service } from "@ember/service";
+import RouterService from "@ember/routing/router-service";
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
@@ -18,37 +17,43 @@ const wsLink = new WebSocketLink({
   }
 });
 
-const cache = new InMemoryCache();
-
 export default class Apollo extends ApolloService {
-  // normal class body definition here
-  // @service session: any;
+  @service router!: RouterService;
 
-  // clientOptions() {
-  //   console.log("client opts");
-  //   return {
-  //     link: this.link(),
-  //     cache: cache
-  //   };
-  // }
+  token?: any;
 
   link() {
-    let httpLink = super.link();
+    let httpLink: any = super.link();
 
-    // const socket = new Socket("ws://socket-url", {
-    //   params: { token: this.get("session.token") }
-    // });
-    // const socketLink = createAbsintheSocketLink(AbsintheSocket.create(socket));
+    // Middleware
+    let authMiddleware = setContext(async (request, context) => {
+      if (!this.token) {
+        this.token = (await localStorage.getItem("token")) || null;
+      }
+      console.log("ZA LINK 🐕");
+      if (this.token) {
+        context.headers = {
+          "x-token": this.token
+        };
+      }
+      return context;
+    });
 
-    // return split(
-    //   ({ query }) => {
-    //     const { kind, operation } = getMainDefinition(query);
+    // Afterware
+    const resetToken = onError(({ networkError }) => {
+      const error = networkError as ServerError;
 
-    //     return kind === "OperationDefinition" && operation === "subscription";
-    //   },
-    //   socketLink,
-    //   httpLink
-    // );
+      if (
+        (networkError && error.statusCode === 400) ||
+        error.statusCode === 401
+      ) {
+        // remove cached token on 401 from the server
+        this.token = undefined;
+      }
+    });
+
+    const authLink = authMiddleware.concat(resetToken);
+    const combinedLink = authLink.concat(httpLink);
     return split(
       // split based on operation type
       ({ query }) => {
@@ -59,7 +64,7 @@ export default class Apollo extends ApolloService {
         );
       },
       wsLink,
-      httpLink
+      combinedLink
     );
   }
 }

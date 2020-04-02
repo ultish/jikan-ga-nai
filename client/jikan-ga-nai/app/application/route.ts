@@ -1,5 +1,5 @@
 import Route from "@ember/routing/route";
-import { queryManager, getObservable } from "ember-apollo-client";
+import { queryManager } from "ember-apollo-client";
 import messages from "jikan-ga-nai/gql/queries/messages.graphql";
 import messageCreated from "jikan-ga-nai/gql/subscriptions/message-created.graphql";
 
@@ -13,19 +13,6 @@ import { Messages } from "jikan-ga-nai/models/messages";
 
 export default class Application extends Route.extend({
   // anything which *must* be merged to prototype here
-  // setupController(...args: any[]) {
-  //   const [controller, model] = args;
-  // debugger;
-  // this._super(...args);
-  //   // TODO: not ideal either. Basically nothing is using the model hook
-  //   // in the controller as it's not a live array unless the watchQuery
-  //   // gets triggered to update.
-  //   // I've only gotten it to update by re-running the same graphQL query
-  //   // in the handleEvent function
-  //   // TODO: need to read more on watchQuery and how to make it update
-  //   // from a subscription pov.
-  //   model.edges.forEach((msg: any) => controller.addToCache(msg));
-  // }
 }) {
   // ! tells typescrypt this this variable will definately be initialized.
   // otherwise it throws a TS error as we haven't initialized this var

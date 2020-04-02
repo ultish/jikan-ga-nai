@@ -13,26 +13,20 @@ Messages:
   <tbody>
     <tr>
       <td>
-        {{! <ul> }}
         {{#each this.sortedMsgs as |msg|}}
-          {{! <li> }}
           {{msg.id}}: {{msg.text}} by {{msg.user.username}}
           <br />
-          {{! </li> }}
         {{/each}}
-        {{! </ul> }}
       </td>
       <td>
-        {{! <ul> }}
         hello
         {{#each this.model.edges as |m|}}
-          {{! <li> }}
           {{m.text}}
           <br />
-          {{! </li> }}
         {{/each}}
-        {{! </ul> }}
       </td>
     </tr>
   </tbody>
 </table>
+
+<Input id="text" @value="" />

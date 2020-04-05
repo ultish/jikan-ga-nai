@@ -1,4 +1,3 @@
-import Route from "@ember/routing/route";
 import { queryManager } from "ember-apollo-client";
 import messages from "jikan-ga-nai/gql/queries/messages.graphql";
 import messageCreated from "jikan-ga-nai/gql/subscriptions/message-created.graphql";
@@ -11,11 +10,11 @@ import ApolloService from "ember-apollo-client/services/apollo";
 import MessagesController from "./controller";
 import { GetMessages } from "jikan-ga-nai/models/get-messages";
 
-export default class Messages extends Route.extend({
-  // anything which *must* be merged to prototype here
-}) {
+import AuthRoute from "jikan-ga-nai/framework/auth-route";
+
+export default class Messages extends AuthRoute {
   // ! tells typescrypt this this variable will definately be initialized.
-  // otherwise it throws a TS error as we haven't initialized this var
+  // otherwise it throws  a TS error as we haven't initialized this var
   @queryManager() apollo!: ApolloService;
 
   messagesCreatedSub: any;
@@ -37,7 +36,7 @@ export default class Messages extends Route.extend({
   ): Promise<void> {
     super.setupController(controller, model);
 
-    const subscription = await this.apollo.subscribe(
+    this.messagesCreatedSub = await this.apollo.subscribe(
       {
         query: messageCreated
       },
@@ -46,7 +45,7 @@ export default class Messages extends Route.extend({
 
     // TODO it looks like the subscription only fires an event named "event"
     // and you can't seem to change it?
-    addListener(subscription, "event", this.handleEvent);
+    addListener(this.messagesCreatedSub, "event", this.handleEvent);
 
     // TODO: not ideal either. Basically nothing is using the model hook
     // in the controller as it's not a live array unless the watchQuery

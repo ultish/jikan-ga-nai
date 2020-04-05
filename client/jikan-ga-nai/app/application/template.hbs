@@ -1,5 +1,8 @@
-<div class="uk-container">
-  <nav class="uk-navbar-container2" uk-navbar>
+<div
+  class="uk-container2 uk-container-xlarge"
+  uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
+>
+  <nav uk-navbar class="uk-navbar-container">
     <div class="uk-navbar-left">
       <div class="uk-inline">
         <a class="uk-navbar-item uk-logo" href="#">
@@ -13,14 +16,14 @@
           </a>
         </li>
         <li class="uk-parent">
-          <a href="">
-            Timesheets
-          </a>
+          <LinkTo @route="messages">
+            Messages
+          </LinkTo>
         </li>
       </ul>
     </div>
     <div class="uk-navbar-right">
-      <div class="uk-inline">
+      <div class="uk-inline uk-margin-right">
         <button
           type="button"
           class="uk-button uk-button-default"

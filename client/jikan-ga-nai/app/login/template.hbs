@@ -14,10 +14,7 @@
       <div class="uk-margin-small">
         <div class="uk-inline">
           <span class="uk-form-icon" uk-icon="icon: user"></span>
-          <Input
-            @value={{this.username}}
-            class="uk-input uk-form-width-mediu2m"
-          />
+          <Input @value={{this.username}} class="uk-input" />
         </div>
       </div>
       <div class="uk-margin-small">
@@ -27,22 +24,30 @@
         </div>
       </div>
       <br />
-      <div class="uk-position-relative">
+      <div class="uk-flex uk-flex-column uk-flex-middle">
         <Input
           @type="submit"
           @value="Submit"
-          class="uk-button uk-button-primary uk-position-center"
+          class="uk-button uk-button-primary uk-flex-none"
         />
+        <br />
+        <LinkTo @route="signup">
+          Need to create an account?
+        </LinkTo>
       </div>
     </form>
-
-    {{#if this.errors.length}}
-      <h3>
-        Errors
-      </h3>
-      {{#each this.errors as |error|}}
-        {{error.message}}<br />
-      {{/each}}
-    {{/if}}
   </div>
 </div>
+
+{{#if this.errors.length}}
+  <div class="uk-flex uk-flex-column uk-flex-middle uk-margin uk-alert-danger">
+    {{! <div uk-alert class="uk-alert-danger"> }}
+    <h3 class="uk-alert-danger">
+      Could not login
+    </h3>
+    {{#each this.errors as |error|}}
+      {{error.message}}<br />
+    {{/each}}
+    {{! </div> }}
+  </div>
+{{/if}}

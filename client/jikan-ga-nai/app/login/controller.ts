@@ -31,11 +31,14 @@ export default class Login extends Controller {
     this.backgroundImage = `images/spacex-${Math.ceil(
       Math.random() * this.numBgImages
     )}.jpg`;
+
+    this.username = "";
+    this.password = "";
+    this.errors = [];
   };
 
   @action
   async login(e: Event) {
-    console.log("login", e);
     e.preventDefault();
     try {
       const login: SignIn = await this.apollo.mutate({
@@ -49,10 +52,8 @@ export default class Login extends Controller {
       localStorage.setItem("x-token", login.signIn.token);
 
       this.transitionToRoute("application");
-
-      console.log("login", login);
     } catch (e) {
-      console.log(e);
+      console.warn(e);
       this.errors = e.errors;
     }
   }

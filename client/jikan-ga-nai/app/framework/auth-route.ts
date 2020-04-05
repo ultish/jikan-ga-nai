@@ -16,7 +16,6 @@ export default class AuthRoute extends Route {
 
   async beforeModel() {
     const xToken = localStorage.getItem("x-token");
-    console.log("xtoken", xToken);
     if (xToken) {
       // try to login
       try {
@@ -29,7 +28,6 @@ export default class AuthRoute extends Route {
       }
     } else {
       // redirect to login page
-      console.log("redirecting");
       this.transitionTo("login");
     }
   }

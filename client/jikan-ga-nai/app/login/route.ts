@@ -8,9 +8,6 @@ export default class Login extends Route.extend({
 
   setupController(controller: LoginController, model: any) {
     super.setupController(controller, model);
-    controller.username = "";
-    controller.password = "";
-    controller.errors = [];
 
     controller.onRouteActivate();
   }

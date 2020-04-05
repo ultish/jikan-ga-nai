@@ -1,4 +1,4 @@
 import { Message } from "./message";
-export interface Messages {
+export interface GetMessages {
   edges: [Message];
 }

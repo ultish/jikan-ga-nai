@@ -14,8 +14,10 @@ import models, { sequelize } from './models';
 
 import cors from 'cors';
 
-const getMe = async req => {
+const getMe = async (req) => {
   const token = req.headers['x-token'];
+
+  console.log('Headers', req.headers);
 
   if (token) {
     try {
@@ -43,11 +45,12 @@ const server = new ApolloServer({
       return {
         models,
         loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+          user: new DataLoader((keys) => loaders.user.batchUsers(keys, models)),
         },
       };
     }
     if (req) {
+      debugger;
       const me = await getMe(req);
 
       return {
@@ -55,7 +58,7 @@ const server = new ApolloServer({
         me,
         secret: process.env.SECRET,
         loaders: {
-          user: new DataLoader(keys => loaders.user.batchUsers(keys, models)),
+          user: new DataLoader((keys) => loaders.user.batchUsers(keys, models)),
         },
       };
     }
@@ -76,7 +79,7 @@ sequelize.sync({ force: eraseDatabaseOnSync }).then(async () => {
   });
 });
 
-const createUsersWithMessages = async date => {
+const createUsersWithMessages = async (date) => {
   await models.User.create(
     {
       username: 'rwieruch',

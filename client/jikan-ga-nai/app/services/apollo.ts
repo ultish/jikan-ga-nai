@@ -28,7 +28,7 @@ export default class Apollo extends ApolloService {
     // Middleware
     let authMiddleware = setContext(async (request, context) => {
       if (!this.token) {
-        this.token = (await localStorage.getItem("token")) || null;
+        this.token = (await localStorage.getItem("x-token")) || null;
       }
       console.log("ZA LINK 🐕");
       if (this.token) {
@@ -40,16 +40,22 @@ export default class Apollo extends ApolloService {
     });
 
     // Afterware
-    const resetToken = onError(({ networkError }) => {
-      const error = networkError as ServerError;
+    const resetToken = onError(err => {
+      console.log(err);
+      const { graphQLErrors, networkError } = err;
 
-      if (
-        (networkError && error.statusCode === 400) ||
-        error.statusCode === 401
-      ) {
+      const error = networkError as ServerError;
+      if (error && (error.statusCode === 400 || error.statusCode === 401)) {
         // remove cached token on 401 from the server
         this.token = undefined;
+        localStorage.setItem("x-token", "");
       }
+
+      if (graphQLErrors) {
+        console.log("i detect error 🤖");
+      }
+
+      console.log("hello", ...arguments);
     });
 
     const authLink = authMiddleware.concat(resetToken);

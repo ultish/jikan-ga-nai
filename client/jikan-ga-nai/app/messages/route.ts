@@ -8,7 +8,7 @@ import { addListener, removeListener } from "@ember/object/events";
 import ApolloService from "ember-apollo-client/services/apollo";
 
 import MessagesController from "./controller";
-import { GetMessages } from "jikan-ga-nai/models/get-messages";
+import { GetMessages } from "jikan-ga-nai/interfaces/get-messages";
 
 import AuthRoute from "jikan-ga-nai/framework/auth-route";
 
@@ -21,14 +21,10 @@ export default class Messages extends AuthRoute {
 
   constructor() {
     super(...arguments);
-
-    console.log("construcotr", this.controller);
   }
 
   init(...args: any[]) {
     this._super(...args);
-
-    console.log("init here", this.controller);
   }
   async setupController(
     controller: MessagesController,
@@ -137,7 +133,6 @@ export default class Messages extends AuthRoute {
     ) as Promise<GetMessages>;
 
     // this.set("_model", q);
-    console.log("model hook", q);
     return q;
   }
 }

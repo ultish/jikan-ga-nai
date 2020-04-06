@@ -25,13 +25,13 @@ export default {
   Mutation: {
     signUp: async (
       parent,
-      { username, email, password },
+      { username, password, email },
       { models, secret }
     ) => {
       const user = await models.User.create({
         username,
-        email,
         password,
+        email,
       });
       return { token: createToken(user, secret, '1yr') };
     },

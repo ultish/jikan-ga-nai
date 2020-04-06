@@ -30,7 +30,6 @@ export default class Apollo extends ApolloService {
       if (!this.token) {
         this.token = (await localStorage.getItem("x-token")) || null;
       }
-      console.log("ZA LINK 🐕");
       if (this.token) {
         context.headers = {
           "x-token": this.token

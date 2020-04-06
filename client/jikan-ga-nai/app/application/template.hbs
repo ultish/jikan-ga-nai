@@ -5,15 +5,18 @@
   <nav uk-navbar class="uk-navbar-container">
     <div class="uk-navbar-left">
       <div class="uk-inline">
-        <a class="uk-navbar-item uk-logo" href="#">
+        <LinkTo @route="application" @class="uk-navbar-item uk-logo">
           <span class="uk-form-icon" uk-icon="icon: bolt"></span>
-        </a>
+        </LinkTo>
+        {{! <a class="uk-navbar-item uk-logo" href="#">
+          <span class="uk-form-icon" uk-icon="icon: bolt"></span>
+        </a> }}
       </div>
       <ul class="uk-navbar-nav">
         <li class="uk-active">
-          <a href="">
+          <LinkTo @route="application">
             Tracker
-          </a>
+          </LinkTo>
         </li>
         <li class="uk-parent">
           <LinkTo @route="messages">
@@ -23,6 +26,14 @@
       </ul>
     </div>
     <div class="uk-navbar-right">
+      {{this.authentication.authedMe.username}} -
+      {{#if this.this.authentication.me}}
+        <span class="uk-margin-right">
+          <i>
+            {{this.greetings}} {{this.this.authentication.me.username}}
+          </i>
+        </span>
+      {{/if}}
       <div class="uk-inline uk-margin-right">
         <button
           type="button"
@@ -36,4 +47,6 @@
     </div>
   </nav>
 </div>
-{{outlet}}
+<div class="uk-margin-top">
+  {{outlet}}
+</div>

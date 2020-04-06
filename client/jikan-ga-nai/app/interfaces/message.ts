@@ -1,7 +1,7 @@
-import { User } from "./user";
+import IUser from "../models/user";
 
 export interface Message {
   id: string;
   text: string;
-  user: User;
+  user: IUser;
 }

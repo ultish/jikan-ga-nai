@@ -1,7 +1,7 @@
 import Controller from "@ember/controller";
 import { A } from "@ember/array";
 import { sort } from "@ember/object/computed";
-import { Message } from "jikan-ga-nai/models/message";
+import { Message } from "jikan-ga-nai/interfaces/message";
 
 export default class Messages extends Controller {
   constructor() {

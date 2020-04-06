@@ -1,27 +1,28 @@
 import Route from "@ember/routing/route";
-import { queryManager } from "ember-apollo-client";
-import queryMe from "jikan-ga-nai/gql/queries/me.graphql";
+import { inject as service } from "@ember/service";
 
 // importing this for the type reference
-import ApolloService from "ember-apollo-client/services/apollo";
+import Authentication from "jikan-ga-nai/services/authentication";
 
 /**
  * This route checks you've logged in, otherwise re-routes you to the
  * login page
  */
 export default class AuthRoute extends Route {
-  // ! tells typescrypt this this variable will definately be initialized.
-  // otherwise it throws a TS error as we haven't initialized this var
-  @queryManager() apollo!: ApolloService;
+  @service authentication!: Authentication;
 
-  async beforeModel() {
+  async beforeModel(transition: any) {
+    console.log("beforeModel fired");
+
+    if (transition.targetName === "signup") {
+      return;
+    }
+
     const xToken = localStorage.getItem("x-token");
     if (xToken) {
-      // try to login
       try {
-        await this.apollo.query({
-          query: queryMe
-        });
+        // try to login with the x-token
+        await this.authentication.loginWithToken();
       } catch (e) {
         console.warn("Invalid login, redirecting...");
         this.transitionTo("login");

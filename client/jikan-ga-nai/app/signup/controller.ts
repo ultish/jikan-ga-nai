@@ -4,20 +4,18 @@ import { tracked } from "@glimmer/tracking";
 
 import ApolloService from "ember-apollo-client/services/apollo";
 import { queryManager } from "ember-apollo-client";
-import signIn from "jikan-ga-nai/gql/mutations/signIn.graphql";
-import { SignIn } from "jikan-ga-nai/interfaces/sign-in";
+import signUp from "jikan-ga-nai/gql/mutations/signUp.graphql";
+import { SignUp } from "jikan-ga-nai/interfaces/sign-up";
 import { htmlSafe } from "@ember/string";
-import { inject as service } from "@ember/service";
-import Authentication from "jikan-ga-nai/services/authentication";
 
-export default class Login extends Controller {
+export default class Signup extends Controller {
   @queryManager({ service: "apollo" }) apollo!: ApolloService;
-  @service authentication!: Authentication;
-
   @tracked
   username = "";
   @tracked
   password = "";
+  @tracked
+  email = "";
   @tracked
   errors = [];
 
@@ -38,37 +36,56 @@ export default class Login extends Controller {
 
     this.username = "";
     this.password = "";
+    this.email = "";
     this.errors = [];
   };
 
   @action
-  async login(e: Event) {
+  async signup(e: Event) {
     e.preventDefault();
+    console.log("create");
+
     try {
-      const login: SignIn = await this.apollo.mutate({
-        mutation: signIn,
+      const success: SignUp = await this.apollo.mutate({
+        mutation: signUp,
         variables: {
-          login: this.username,
-          password: this.password
+          username: this.username,
+          password: this.password,
+          email: this.email
         }
       });
 
-      localStorage.setItem("x-token", login.signIn.token);
-
-      // fetch and update me
-      await this.authentication.loginWithToken();
-
-      this.transitionToRoute("application");
+      if (success) {
+        localStorage.setItem("x-token", success.signUp.token);
+        this.transitionToRoute("application");
+      }
     } catch (e) {
       console.warn(e);
-      this.errors = e.errors;
+      this.errors = this.parseErrors(e);
     }
+  }
+
+  parseErrors(e: any) {
+    return e.errors.map((error: any) => {
+      const name = error.message;
+      let details = [];
+      if (error.extensions) {
+        details = error?.extensions?.exception?.errors;
+        if (details) {
+          details = details.map((d: any) => d.message);
+        }
+      }
+      return {
+        name: name,
+        details: details
+      };
+    });
   }
 }
 
 // DO NOT DELETE: this is how TypeScript knows how to look up your controllers.
 declare module "@ember/controller" {
   interface Registry {
-    login: Login;
+    signup: Signup;
   }
 }

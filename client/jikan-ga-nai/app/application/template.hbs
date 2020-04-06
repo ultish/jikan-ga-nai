@@ -26,11 +26,10 @@
       </ul>
     </div>
     <div class="uk-navbar-right">
-      {{this.authentication.authedMe.username}} -
-      {{#if this.this.authentication.me}}
+      {{#if this.this.authentication.authedMe}}
         <span class="uk-margin-right">
           <i>
-            {{this.greetings}} {{this.this.authentication.me.username}}
+            {{this.greetings}} {{this.this.authentication.authedMe.username}}
           </i>
         </span>
       {{/if}}

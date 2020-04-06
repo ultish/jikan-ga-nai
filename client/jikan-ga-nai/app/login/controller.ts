@@ -4,8 +4,6 @@ import { tracked } from "@glimmer/tracking";
 
 import ApolloService from "ember-apollo-client/services/apollo";
 import { queryManager } from "ember-apollo-client";
-import signIn from "jikan-ga-nai/gql/mutations/signIn.graphql";
-import { SignIn } from "jikan-ga-nai/interfaces/sign-in";
 import { htmlSafe } from "@ember/string";
 import { inject as service } from "@ember/service";
 import Authentication from "jikan-ga-nai/services/authentication";
@@ -45,22 +43,11 @@ export default class Login extends Controller {
   async login(e: Event) {
     e.preventDefault();
     try {
-      const login: SignIn = await this.apollo.mutate({
-        mutation: signIn,
-        variables: {
-          login: this.username,
-          password: this.password
-        }
-      });
-
-      localStorage.setItem("x-token", login.signIn.token);
-
-      // fetch and update me
-      await this.authentication.loginWithToken();
+      const me = await this.authentication.login(this.username, this.password);
+      console.log("logged in with token", me);
 
       this.transitionToRoute("application");
     } catch (e) {
-      console.warn(e);
       this.errors = e.errors;
     }
   }

@@ -8,6 +8,7 @@ import { onError } from "apollo-link-error";
 import { ServerError } from "apollo-link-http-common";
 import { inject as service } from "@ember/service";
 import RouterService from "@ember/routing/router-service";
+import Authentication from "./authentication";
 
 // Create a WebSocket link:
 const wsLink = new WebSocketLink({
@@ -19,20 +20,23 @@ const wsLink = new WebSocketLink({
 
 export default class Apollo extends ApolloService {
   @service router!: RouterService;
+  @service authentication!: Authentication;
 
-  token?: any;
+  // token?: any;
 
   link() {
     let httpLink: any = super.link();
 
     // Middleware
     let authMiddleware = setContext(async (request, context) => {
-      if (!this.token) {
-        this.token = (await localStorage.getItem("x-token")) || null;
-      }
-      if (this.token) {
+      // let token: string | null = this.authentication.getToken;
+      let token = this.authentication.getToken();
+
+      console.log("apollo", token);
+
+      if (token) {
         context.headers = {
-          "x-token": this.token
+          "x-token": token
         };
       }
       return context;
@@ -46,8 +50,7 @@ export default class Apollo extends ApolloService {
       const error = networkError as ServerError;
       if (error && (error.statusCode === 400 || error.statusCode === 401)) {
         // remove cached token on 401 from the server
-        this.token = undefined;
-        localStorage.setItem("x-token", "");
+        this.authentication.logout();
       }
 
       if (graphQLErrors) {

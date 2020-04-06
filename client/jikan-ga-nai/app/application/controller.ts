@@ -17,15 +17,13 @@ export default class Application extends Controller {
 
   onRouteActivate = () => {
     this.greetings = this.availableGreets[Math.floor(Math.random() * 3)];
-
-    console.log("gree", this.greetings);
   };
 
   @action
-  logout() {
-    localStorage.setItem("x-token", "");
-
-    this.authentication.updateMe(null);
+  async logout() {
+    // localStorage.setItem("x-token", "");
+    await this.authentication.logout();
+    // this.authentication.updateMe(null);
     this.transitionToRoute("login");
   }
 }

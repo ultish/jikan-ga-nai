@@ -12,7 +12,7 @@ import { IUser } from "jikan-ga-nai/interfaces/user";
 export default class AuthRoute extends Route {
   @service authentication!: Authentication;
 
-  testMe?: IUser;
+  // testMe?: IUser;
 
   async beforeModel(transition: any) {
     if (transition.targetName === "signup") {
@@ -23,7 +23,7 @@ export default class AuthRoute extends Route {
     if (xToken) {
       try {
         // try to login with the x-token
-        this.testMe = await (await this.authentication.loginWithToken()).testMe;
+        await await this.authentication.loginWithToken();
       } catch (e) {
         console.warn("Invalid login, redirecting...");
         this.transitionTo("login");

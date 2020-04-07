@@ -56,7 +56,7 @@ export default class Signup extends Controller {
 
       if (success) {
         localStorage.setItem("x-token", success.signUp.token);
-        this.transitionToRoute("application");
+        this.transitionToRoute("home");
       }
     } catch (e) {
       console.warn(e);

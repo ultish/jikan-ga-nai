@@ -2,7 +2,7 @@
   class="uk-container2 uk-container-xlarge"
   uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky"
 >
-  <nav uk-navbar class="uk-navbar-container">
+  {{!-- <nav uk-navbar class="uk-navbar-container">
     <div class="uk-navbar-left">
       <div class="uk-inline">
         <LinkTo @route="application" @class="uk-navbar-item uk-logo">
@@ -45,7 +45,8 @@
         </button>
       </div>
     </div>
-  </nav>
+  </nav> --}}
+  <Ui::NavBar />
 </div>
 <div class="uk-margin-top">
   {{outlet}}

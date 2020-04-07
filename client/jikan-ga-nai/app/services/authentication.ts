@@ -37,7 +37,8 @@ export default class Authentication extends Service {
     this.token = undefined;
     this.authedMe = null;
     localStorage.setItem("x-token", "");
-    this.apollo.apolloClient.clearStore();
+
+    await this.apollo.apolloClient.clearStore();
   }
 
   async login(username: string, password: string) {
@@ -64,24 +65,29 @@ export default class Authentication extends Service {
   }
 
   async loginWithToken() {
-    try {
-      const me: IUser = await this.apollo.query(
-        {
-          query: queryMe,
-          fetchPolicy: "network-only",
-        },
-        "me"
-      );
+    const token = this.getToken();
+    if (token) {
+      try {
+        const me: IUser = await this.apollo.query(
+          {
+            query: queryMe,
+            fetchPolicy: "network-only",
+          },
+          "me"
+        );
 
-      this.authedMe = new User(me.id, me.username, me.email, me.role);
-      return {
-        me: this.authedMe,
-        testMe: me,
-      };
-    } catch (e) {
-      this.authedMe = null;
-      console.warn("Invalid login...");
-      throw e;
+        this.authedMe = new User(me.id, me.username, me.email, me.role);
+        return {
+          me: this.authedMe,
+          testMe: me,
+        };
+      } catch (e) {
+        this.authedMe = null;
+        console.warn("Invalid login...");
+        throw e;
+      }
+    } else {
+      return null;
     }
   }
 }

@@ -45,7 +45,7 @@ export default class Login extends Controller {
     try {
       await this.authentication.login(this.username, this.password);
 
-      this.transitionToRoute("application");
+      this.transitionToRoute("home");
     } catch (e) {
       this.errors = e.errors;
     }

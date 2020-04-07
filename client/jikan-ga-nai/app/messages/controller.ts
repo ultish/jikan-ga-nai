@@ -11,6 +11,10 @@ export default class Messages extends Controller {
   // Can define a Message interface and make these use that type instead
   msgCache = A<Message>();
 
+  onRouteActivate = () => {
+    this.msgCache.clear();
+  };
+
   @sort("msgCache", (a, b) => {
     const aId = Number.parseInt(a.id);
     const bId = Number.parseInt(b.id);

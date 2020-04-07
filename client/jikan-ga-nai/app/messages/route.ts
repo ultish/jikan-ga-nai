@@ -31,6 +31,7 @@ export default class Messages extends AuthRoute {
     model: GetMessages
   ): Promise<void> {
     super.setupController(controller, model);
+    controller.onRouteActivate();
 
     this.messagesCreatedSub = await this.apollo.subscribe(
       {

@@ -3,6 +3,7 @@ import { inject as service } from "@ember/service";
 
 // importing this for the type reference
 import Authentication from "jikan-ga-nai/services/authentication";
+import { IUser } from "jikan-ga-nai/interfaces/user";
 
 /**
  * This route checks you've logged in, otherwise re-routes you to the
@@ -11,9 +12,9 @@ import Authentication from "jikan-ga-nai/services/authentication";
 export default class AuthRoute extends Route {
   @service authentication!: Authentication;
 
-  async beforeModel(transition: any) {
-    console.log("beforeModel fired");
+  testMe?: IUser;
 
+  async beforeModel(transition: any) {
     if (transition.targetName === "signup") {
       return;
     }
@@ -22,7 +23,7 @@ export default class AuthRoute extends Route {
     if (xToken) {
       try {
         // try to login with the x-token
-        await this.authentication.loginWithToken();
+        this.testMe = await (await this.authentication.loginWithToken()).testMe;
       } catch (e) {
         console.warn("Invalid login, redirecting...");
         this.transitionTo("login");

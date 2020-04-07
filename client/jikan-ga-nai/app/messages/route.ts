@@ -35,7 +35,7 @@ export default class Messages extends AuthRoute {
 
     this.messagesCreatedSub = await this.apollo.subscribe(
       {
-        query: messageCreated
+        query: messageCreated,
       },
       "messageCreated"
     );
@@ -51,7 +51,9 @@ export default class Messages extends AuthRoute {
     // in the handleEvent function
     // TODO: need to read more on watchQuery and how to make it update
     // from a subscription pov.
-    model.edges.forEach(msg => controller.addToCache(msg));
+    console.log("setup contorller", model);
+
+    model.edges.forEach((msg) => controller.addToCache(msg));
   }
 
   resetController(
@@ -106,11 +108,17 @@ export default class Messages extends AuthRoute {
     // because this.apollo is typed, watchQuery function breaks if you
     // provide incorrect options to it, even down to the object keys in
     // the first param!
+
+    /*
+    setting the fetchPolicy to cache and network will cause this query to
+    return immediately with the cached values. It will then subsequently 
+    get updated and contain any new values from the network.
+    */
     const q = this.apollo.watchQuery(
       {
         query: messages,
-        notifyOnNetworkStatusChange: true,
-        fetchPolicy: "cache-and-network" //"network-only" //"cache-and-network"
+        // notifyOnNetworkStatusChange: true,
+        fetchPolicy: "cache-and-network", //"network-only" //"cache-and-network"
       },
       /**
        * this is the resultsKey param.
@@ -132,6 +140,10 @@ export default class Messages extends AuthRoute {
        */
       "messages"
     ) as Promise<GetMessages>;
+
+    q.then((msgs) => {
+      console.log("model hook", msgs);
+    });
 
     // this.set("_model", q);
     return q;

@@ -25,23 +25,18 @@ export default class Authentication extends Service {
       this.token = localStorage.getItem("x-token") || undefined;
     }
 
-    console.log("auth get token", this.token);
     return this.token;
   }
 
   setToken(token: string) {
     this.token = token;
-    console.log("auth set token", token);
     localStorage.setItem("x-token", token);
   }
 
   async logout() {
-    console.log("auth logout");
     this.token = undefined;
     this.authedMe = null;
     localStorage.setItem("x-token", "");
-
-    console.log("clearing store");
     this.apollo.apolloClient.clearStore();
   }
 
@@ -51,13 +46,11 @@ export default class Authentication extends Service {
         mutation: signIn,
         variables: {
           login: username,
-          password: password
-        }
+          password: password,
+        },
       });
 
       this.setToken(login.signIn.token);
-
-      console.log("auth login", this.token);
 
       // TODO: this is a bit odd. Without re-querying apollo, it maintains a connection that
       // isn't logged in. So logging in again here by making a query via the new token will
@@ -74,17 +67,19 @@ export default class Authentication extends Service {
     try {
       const me: IUser = await this.apollo.query(
         {
-          query: queryMe
+          query: queryMe,
+          fetchPolicy: "network-only",
         },
         "me"
       );
-      console.log("auth login via token", me);
 
       this.authedMe = new User(me.id, me.username, me.email, me.role);
-      return this.authedMe;
+      return {
+        me: this.authedMe,
+        testMe: me,
+      };
     } catch (e) {
       this.authedMe = null;
-
       console.warn("Invalid login...");
       throw e;
     }

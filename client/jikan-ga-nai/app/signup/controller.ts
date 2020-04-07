@@ -43,7 +43,6 @@ export default class Signup extends Controller {
   @action
   async signup(e: Event) {
     e.preventDefault();
-    console.log("create");
 
     try {
       const success: SignUp = await this.apollo.mutate({
@@ -51,8 +50,8 @@ export default class Signup extends Controller {
         variables: {
           username: this.username,
           password: this.password,
-          email: this.email
-        }
+          email: this.email,
+        },
       });
 
       if (success) {
@@ -77,7 +76,7 @@ export default class Signup extends Controller {
       }
       return {
         name: name,
-        details: details
+        details: details,
       };
     });
   }

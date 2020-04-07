@@ -14,8 +14,8 @@ import Authentication from "./authentication";
 const wsLink = new WebSocketLink({
   uri: `ws://localhost:8000/graphql`,
   options: {
-    reconnect: true
-  }
+    reconnect: true,
+  },
 });
 
 export default class Apollo extends ApolloService {
@@ -32,18 +32,16 @@ export default class Apollo extends ApolloService {
       // let token: string | null = this.authentication.getToken;
       let token = this.authentication.getToken();
 
-      console.log("apollo", token);
-
       if (token) {
         context.headers = {
-          "x-token": token
+          "x-token": token,
         };
       }
       return context;
     });
 
     // Afterware
-    const resetToken = onError(err => {
+    const resetToken = onError((err) => {
       console.log(err);
       const { graphQLErrors, networkError } = err;
 

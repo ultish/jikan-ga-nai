@@ -43,8 +43,7 @@ export default class Login extends Controller {
   async login(e: Event) {
     e.preventDefault();
     try {
-      const me = await this.authentication.login(this.username, this.password);
-      console.log("logged in with token", me);
+      await this.authentication.login(this.username, this.password);
 
       this.transitionToRoute("application");
     } catch (e) {

@@ -13,9 +13,12 @@ export default class Messages extends Controller {
 
   onRouteActivate = () => {
     this.msgCache.clear();
+    console.log("route activated ", this.msgCache);
   };
 
   @sort("msgCache", (a, b) => {
+    console.log("sorting now...");
+
     const aId = Number.parseInt(a.id);
     const bId = Number.parseInt(b.id);
 
@@ -30,8 +33,9 @@ export default class Messages extends Controller {
 
   // This is basically how i'm handling subscriptions atm and dealing with
   // the intial model load.
-  addToCache = function(this: Messages, msg: Message) {
+  addToCache = function (this: Messages, msg: Message) {
     this.msgCache.pushObject(msg);
+    console.log("add to msg cache", msg, this.msgCache);
   };
 }
 
